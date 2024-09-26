@@ -14,10 +14,6 @@ st.set_page_config(layout="wide")
 # Create a thread-safe queue for inter-thread communication
 data_queue = Queue()
 
-if not data_queue.empty():
-    data = data_queue.get()
-    st.write(f"Received data: {data}")  # Debug line
-
 # List to store live feed messages
 live_feed = []
 
@@ -27,20 +23,11 @@ async def listen_to_websocket():
     async with websockets.connect(uri) as websocket:
         while True:
             data = await websocket.recv()
-            
-            # Print raw data for debugging
-            print(f"Raw WebSocket data: {data}")
-            
             try:
-                # Attempt to decode JSON
                 data = json.loads(data)
-                
-                # Put the data in the queue
                 data_queue.put(data)
-                
             except json.JSONDecodeError as e:
                 st.error(f"Failed to decode JSON: {e}")
-                print(f"JSONDecodeError: {e}")
 
 # Function to start WebSocket listener in a separate thread
 def start_websocket_listener():
@@ -53,10 +40,23 @@ if 'map_data' not in st.session_state:
     st.session_state.map_data = []
 
 # Function to generate random transparent color
+# def random_color():
+#     return [random.randint(0, 100), random.randint(0, 100), random.randint(0, 100), 200]
 def random_color():
-    return [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), random.randint(50, 150)]  # Transparency between 50-150
+    colors = [
+        [255, 0, 0, 200],     # Bright Red
+        [0, 255, 0, 200],     # Bright Green
+        [0, 0, 255, 200],     # Bright Blue
+        [255, 255, 0, 200],   # Yellow
+        [255, 165, 0, 200],   # Orange
+        [255, 20, 147, 200],  # Deep Pink
+        [128, 0, 128, 200],   # Purple
+        [0, 255, 255, 200],   # Cyan
+        [75, 0, 130, 200],    # Indigo
+    ]
+    return random.choice(colors)
 
-# Function to remove bubbles and tooltips after 12 seconds
+# Function to remove bubbles and tooltips after 15 seconds
 def clean_up_old_markers():
     current_time = time.time()
     st.session_state.map_data = [marker for marker in st.session_state.map_data if current_time - marker['timestamp'] < 15]
@@ -96,43 +96,50 @@ with col1:
 st.markdown("""
     <style>
         .live-chat-box {
-            max-height: 250px;  /* Reduce the overall height */
-            overflow-y: auto;  /* Enable scrolling */
-            border: 1px solid #ccc; 
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
             border-radius: 10px;
-            padding: 8px;  /* Adjust padding */
+            padding: 8px;
             background-color: #f9f9f9;
             width: 100%;
         }
         .live-chat-message {
-            padding: 4px;  /* Reduce padding */
+            padding: 4px;
             margin-bottom: 8px;
             border-bottom: 1px solid #ddd;
-            font-size: 14px;  /* Force reduce message font size */
+            font-size: 14px;
         }
         .live-chat-message h4 {
             margin: 0;
             color: #333;
             font-weight: bold;
-            font-size: 14px !important;  /* Force the heading size to be smaller */
+            font-size: 14px;
         }
         .live-chat-message p {
             margin: 5px 0;
             color: #666;
-            font-size: 12px !important;  /* Force the message text size to be smaller */
+            font-size: 12px;
+        }
+        .bubble {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
         }
         .timestamp {
-            font-size: 10px !important;  /* Reduce timestamp font size */
+            font-size: 10px;
             color: gray;
         }
     </style>
 """, unsafe_allow_html=True)
 
 view_state = pdk.ViewState(
-    latitude=20.5937,  # Set to India's approximate center
-    longitude=78.9629,  # Set to India's approximate center
-    zoom=4,  # Zoom level
-    pitch=0  # Camera angle
+    latitude=20.5937,
+    longitude=78.9629,
+    zoom=4,
+    pitch=0
 )
 
 # Main loop to poll for data
@@ -140,40 +147,48 @@ while True:
     if not data_queue.empty():
         data = data_queue.get()
 
-        # Extract data from the JSON
         longitude = data['longitude']
         latitude = data['latitude']
         status_flag = data['status_flag']
-        project_name = data.get('project_name', 'Unknown Project')  # Extract project name
+        project_name = data.get('project_name', 'Unknown Project')
         school_name = data.get('school_name', 'N/A')
+
+        # Generate random color
+        marker_color = random_color()
 
         # Update status_flag_sum
         st.session_state.status_flag_sum += status_flag
 
-        # Add a new marker (bubble) to the data with a random color and timestamp
+        # Add a new marker to the map data
         st.session_state.map_data.append({
             'latitude': latitude,
             'longitude': longitude,
             'status_flag': status_flag,
-            'color': random_color(),
+            'color': marker_color,
             'project_name': project_name,
             'school_name': school_name,
             'timestamp': time.time()
         })
 
-        # Format the current time for the message
         current_time = time.strftime("%H:%M:%S", time.localtime())
-        
-        # Add to the live feed (showing most recent message on top)
-        live_feed.insert(0, f"<div class='live-chat-message'><h4>Project Name: {project_name}, School Name: {school_name}</h4><p>Status: {status_flag}</p><span class='timestamp'>{current_time}</span></div>")
 
-        # Limit the live feed to the latest 10 messages
-        live_feed = live_feed[:10]
+        # Add to the live feed with a bubble representing the marker color
+        live_feed.append(f"""
+            <div class='live-chat-message'>
+                <span class='bubble' style='background-color: rgba({marker_color[0]}, {marker_color[1]}, {marker_color[2]}, 1);'></span>
+                <h4>Project: {project_name}, School: {school_name}</h4>
+                <p>Status: {status_flag}</p>
+                <span class='timestamp'>{current_time}</span>
+            </div>
+        """)
+
+        # Limit live feed size (optional, based on your preference)
+        live_feed = live_feed[:]  # Keep only the last 50 messages
 
     # Clean up markers older than 15 seconds
     clean_up_old_markers()
 
-    # Update the sum of status flags with a heading and big number
+    # Update the sum of status flags
     status_flag_placeholder.markdown(f"""
         <div style='text-align: center; border: 1px solid black; padding: 5px; width: 100%; margin: 0 auto; border-radius: 10px;'>
             <p style='font-size: 20px; color: gray;'>Total Number of Submissions</p>
@@ -181,27 +196,24 @@ while True:
         </div>
         """, unsafe_allow_html=True)
 
-    # Display live chat messages in a scrollable box
-    live_feed_placeholder.markdown(f"<div class='live-chat-box'>{''.join(live_feed)}</div>", unsafe_allow_html=True)
+    # Display live chat messages in ascending order (latest at bottom)
+    live_feed_clean = ''.join([msg.replace('\n', '') for msg in live_feed])
+    live_feed_placeholder.markdown(f"<div class='live-chat-box'>{live_feed_clean}</div>", unsafe_allow_html=True)
 
-    # Create a Pydeck Layer for the markers with random transparent colors
+    # Create a Pydeck Layer for the markers
     scatter_layer = pdk.Layer(
         "ScatterplotLayer",
         data=st.session_state.map_data,
         get_position='[longitude, latitude]',
-        get_color='color',  # Use the random color for each bubble
-        get_radius=20000,  # Adjust the size of the markers
+        get_color='color',
+        get_radius=50000,
         pickable=True,
         auto_highlight=True,
-        tooltip=True
     )
 
-    # Create an HTML tooltip for project details (styled card)
     html_tooltip = """
-    <div style="background-color:white; padding:10px; border-radius:5px; box-shadow: 2px 2px 10px rgba(0,0,0,0.5);">
-        <h4 style="margin:0; padding-bottom: 10px; color: #1a73e8; font-size: 16px;">Project Name: {project_name}</h4>
-        <h4 style="margin:0; padding-bottom: 10px; color: #1a73e8; font-size: 16px;">School Name: {school_name}</h4>
-    </div>
+    <b>Project Name:</b> {project_name},
+    <b>School Name:</b> {school_name}
     """
 
     # Add HTML tooltips to markers
@@ -215,9 +227,8 @@ while True:
     map_placeholder.pydeck_chart(pdk.Deck(
         layers=[scatter_layer],
         initial_view_state=view_state,
-        tooltip={"html": "{tooltip}", "style": {"color": "white", "backgroundColor": "black"}},
+        tooltip={"html": "{tooltip}", "style": {"backgroundColor": "steelblue","color": "white"}},
+        map_style='mapbox://styles/mapbox/light-v10',
         height=600
     ))
-
-    # Sleep briefly to allow the Streamlit app to update
     time.sleep(1)
