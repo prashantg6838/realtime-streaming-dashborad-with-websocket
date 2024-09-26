@@ -20,7 +20,7 @@ async def send_to_websocket(data):
     for client in connected_clients:
         await client.send(message)
 
-start_server = websockets.serve(handler, "localhost", 8765)
+start_server = websockets.serve(handler, "0.0.0.0", 8765)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
