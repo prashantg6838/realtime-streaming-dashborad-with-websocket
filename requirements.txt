@@ -14,7 +14,7 @@ branca==0.7.2
 cachetools==5.5.0
 certifi==2024.8.30
 charset-normalizer==3.3.2
-click==8.1.7
+click==7.1.2
 colorclass==2.2.2
 colorlog==6.8.2
 colour==0.1.5
