@@ -19,7 +19,7 @@ live_feed = []
 
 # Function to listen to WebSocket
 async def listen_to_websocket():
-    uri = "wss://787d-2409-40f2-208e-523b-5cb-a0d2-537c-c2b6.ngrok-free.app"
+    uri = "https://7a12-2409-40f2-208e-523b-ea5c-8914-79b7-bf39.ngrok-free.app "
     async with websockets.connect(uri) as websocket:
         while True:
             data = await websocket.recv()
