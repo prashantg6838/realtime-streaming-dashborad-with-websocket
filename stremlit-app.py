@@ -185,7 +185,7 @@ while True:
         live_feed.append(f"""
         <div class='live-chat-message'>
             <span class='bubble' style='background-color: rgba({marker_color[0]}, {marker_color[1]}, {marker_color[2]}, 1);'></span>
-            <h4>Project: {project_name}, School: <a href='school-detail.html?school={school_name}' target='_blank'>{school_name}</a></h4>
+            <h4>Project: {project_name}, School: <a href='school-details.html?school={school_name}' target='_blank'>{school_name}</a></h4>
             <p>Status: {status_flag}</p>
             <span class='timestamp'>{current_time}</span>
         </div>
