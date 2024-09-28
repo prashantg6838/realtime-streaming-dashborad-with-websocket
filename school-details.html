@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Improvement Project Details</title>
+    <link rel="stylesheet" href="school-details-styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Left Section -->
+        <div class="left-section">
+            <!-- School Name and Image -->
+            <div class="school-info">
+                <h1 id="school-name">School Name</h1>
+                <img id="school-image" src="school_image_url" alt="School Image">
+            </div>
+
+            <!-- Project Details -->
+            <div id="project-details" class="project-details-container">
+                <h2 id="project-title" class="project-title"></h2>
+                <p id="project-objective" class="project-objective"></p>
+                
+                <div class="project-info">
+                    <div class="left-column">
+                        <p><span class="label">DESCRIPTION:</span> <span id="project-description"></span></p>
+                        <p><span class="label">Recommended duration:</span> <span id="project-duration"></span></p>
+                        <p><span class="label">Recommended for:</span> <span id="project-recommended"></span></p>
+                        <p><span class="label">Domain:</span> <span id="project-domain"></span></p>
+                    </div>
+                    <div class="right-column">
+                        <h3>Steps Taken:</h3>
+                        <ol id="project-steps"></ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+            <!-- Project Stats -->
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number" id="projects-in-progress">03</div>
+                    <div class="stat-label">Total number of micro improvements In progress</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="projects-completed">05</div>
+                    <div class="stat-label">Total number of micro improvements Completed</div>
+                </div>
+            </div>
+
+            <!-- Category Breakdown -->
+            <div class="category-breakdown">
+                <h2>Category Breakdown</h2>
+                <canvas id="category-chart" width="400" height="400"></canvas>
+            </div>
+
+            <!-- Project List -->
+            <div class="projects-list">
+                <h2>Projects</h2>
+                <div id="project-cards" class="project-cards"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="school-details-script.js"></script>
+</body>
+</html>

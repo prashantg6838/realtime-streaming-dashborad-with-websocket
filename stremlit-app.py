@@ -19,7 +19,7 @@ live_feed = []
 
 # Function to listen to WebSocket
 async def listen_to_websocket():
-    uri = "wss://86c4-2409-40f2-208e-523b-ea5c-8914-79b7-bf39.ngrok-free.app"
+    uri = "wss://e91d-2409-40f2-2094-471d-2b76-56f1-1e0a-ea7.ngrok-free.app"
     async with websockets.connect(uri) as websocket:
         while True:
             data = await websocket.recv()
@@ -173,13 +173,22 @@ while True:
         current_time = time.strftime("%H:%M:%S", time.localtime())
 
         # Add to the live feed with a bubble representing the marker color
+        # live_feed.append(f"""
+        #     <div class='live-chat-message'>
+        #         <span class='bubble' style='background-color: rgba({marker_color[0]}, {marker_color[1]}, {marker_color[2]}, 1);'></span>
+        #         <h4>Project: {project_name}, School: {school_name}</h4>
+        #         <p>Status: {status_flag}</p>
+        #         <span class='timestamp'>{current_time}</span>
+        #     </div>
+        # """)
+        # Modify the live feed to include a link
         live_feed.append(f"""
-            <div class='live-chat-message'>
-                <span class='bubble' style='background-color: rgba({marker_color[0]}, {marker_color[1]}, {marker_color[2]}, 1);'></span>
-                <h4>Project: {project_name}, School: {school_name}</h4>
-                <p>Status: {status_flag}</p>
-                <span class='timestamp'>{current_time}</span>
-            </div>
+        <div class='live-chat-message'>
+            <span class='bubble' style='background-color: rgba({marker_color[0]}, {marker_color[1]}, {marker_color[2]}, 1);'></span>
+            <h4>Project: {project_name}, School: <a href='school-detail.html?school={school_name}' target='_blank'>{school_name}</a></h4>
+            <p>Status: {status_flag}</p>
+            <span class='timestamp'>{current_time}</span>
+        </div>
         """)
 
         # Limit live feed size (optional, based on your preference)
