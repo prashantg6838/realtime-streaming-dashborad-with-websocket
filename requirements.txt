@@ -32,7 +32,7 @@ duckdb==1.0.0
 exceptiongroup==1.2.2
 executing==2.1.0
 faust==1.10.4
-psycopg2
+psycopg2-binary==2.9.9
 filelock==3.16.0
 Flask==2.0.3
 folium==0.17.0
