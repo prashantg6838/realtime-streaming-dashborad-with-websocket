@@ -25,8 +25,8 @@ def connect_to_db():
             dbname='postgres',
             user='root',
             password='root',
-            host='localhost',
-            port='5432'  # Change if needed
+            host='0.tcp.in.ngrok.io',
+            port='11937'  # Change if needed
         )
         return conn
     except Exception as e:
@@ -80,7 +80,7 @@ if initial_sum == 0:
 
 # Function to listen to WebSocket
 async def listen_to_websocket():
-    uri = "ws://fd3a-2409-40f2-2094-f14d-784a-95ad-64dc-d0f2.ngrok-free.app"
+    uri = "wss://c880-2409-40f2-2083-3dc6-9095-72d0-e6a1-a530.ngrok-free.app"
     async with websockets.connect(uri) as websocket:
         while True:
             data = await websocket.recv()
