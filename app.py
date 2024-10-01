@@ -26,7 +26,7 @@ def connect_to_db():
             user='root',
             password='root',
             host='0.tcp.in.ngrok.io',
-            port='15536'  # Change if needed
+            port='19813'  # Change if needed
         )
         return conn
     except Exception as e:
@@ -80,7 +80,7 @@ if initial_sum == 0:
 
 # Function to listen to WebSocket
 async def listen_to_websocket():
-    uri = "wss://9570-106-51-84-210.ngrok-free.app"
+    uri = "wss://e1e7-2409-40f2-2083-3dc6-3470-babf-2102-56be.ngrok-free.app"
     async with websockets.connect(uri) as websocket:
         while True:
             data = await websocket.recv()
