@@ -80,7 +80,7 @@ if initial_sum == 0:
 
 # Function to listen to WebSocket
 async def listen_to_websocket():
-    uri = "wss://9570-106-51-84-210.ngrok-free.app.app"
+    uri = "wss://9570-106-51-84-210.ngrok-free.app"
     async with websockets.connect(uri) as websocket:
         while True:
             data = await websocket.recv()
