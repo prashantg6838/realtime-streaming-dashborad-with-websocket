@@ -258,7 +258,7 @@ while True:
         """)
 
         # Limit live feed size (optional, based on your preference)
-        live_feed = live_feed[:]  # Keep only the last 50 messages
+        live_feed = live_feed[-50:]  # Keep only the last 50 messages
 
     # Clean up markers older than 15 seconds
     clean_up_old_markers()
