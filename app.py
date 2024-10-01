@@ -250,7 +250,7 @@ while True:
             <div class='live-chat-message'>
                 <span class='avatar bubble-color' style='background-color: rgba({marker_color[0]}, {marker_color[1]}, {marker_color[2]}, 1);'></span>
                 <div class='message-content'>
-                    <h4>Project Name: {project_name} School Name: <a href='school-details.html?school Name={school_name}' target='_blank'>{school_name}</a></h4>
+                    <h4>Project Name: {project_name} School Name: <a href='https://main--shikshalokam-mi-dashboard.netlify.app/school-details.html?school=school_id_45?school_name={school_name}' target='_blank'>{school_name}</a></h4>
                     <p>Status: {status_flag}</p>
                     <div class='timestamp'>{current_time}</div>
                 </div>
