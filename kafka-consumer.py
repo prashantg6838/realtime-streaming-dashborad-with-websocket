@@ -39,7 +39,7 @@ async def process_location(locations):
 
 # WebSocket handler (you will need to define the WebSocket URL and logic)
 async def send_to_websocket(data):
-    uri = "wss://1515-2409-40f2-2083-3dc6-5408-2192-2630-2927.ngrok-free.app"  # Example WebSocket URI
+    uri = "ws://serveo.net:8875"  # Example WebSocket URI
     try:
         async with websockets.connect(uri) as websocket:
             # Send the data as a string
