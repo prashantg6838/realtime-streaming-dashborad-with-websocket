@@ -205,6 +205,13 @@ st.markdown("""
             background-color: rgba(0, 0, 255, 1); /* Replace with dynamic color */
         }
     </style>
+    <script>
+        // Automatically scroll to the bottom of the live feed message box
+        const chatBox = window.parent.document.querySelector('.live-chat-box');
+        if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
 """, unsafe_allow_html=True)
 
 view_state = pdk.ViewState(
