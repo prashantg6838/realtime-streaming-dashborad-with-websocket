@@ -176,7 +176,7 @@ st.markdown("""
             display: inline-block;
         }
         .message-content {
-            background-color: #f4c9fd; /* Default message background color */
+            background-color: #f4c9fd;
             padding: 8px 8px;
             max-height: 132px;
             border: 1px solid #efb0fc;
@@ -202,15 +202,20 @@ st.markdown("""
             text-align: right;
         }
         .bubble-color {
-            background-color: rgba(0, 0, 255, 1); /* Replace with dynamic color */
+            background-color: rgba(0, 0, 255, 1);
         }
     </style>
     <script>
-        // Automatically scroll to the bottom of the live feed message box
-        const chatBox = window.parent.document.querySelector('.live-chat-box');
-        if (chatBox) {
-            chatBox.scrollTop = chatBox.scrollHeight;
+        // Function to automatically scroll the live chat box to the bottom
+        function scrollToBottom() {
+            var chatBox = window.parent.document.querySelector('.live-chat-box');
+            if (chatBox) {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
         }
+
+        // Call the scrollToBottom function every time new messages are added
+        setInterval(scrollToBottom, 500);
     </script>
 """, unsafe_allow_html=True)
 
@@ -254,14 +259,16 @@ while True:
 
         # Modify the live feed generation logic
         live_feed.append(f"""
-            <div class='live-chat-message'>
-                <span class='avatar bubble-color' style='background-color: rgba({marker_color[0]}, {marker_color[1]}, {marker_color[2]}, 1);'></span>
+        <div class='live-chat-message'>
+            <span class='avatar bubble-color' style='background-color: rgba({marker_color[0]}, {marker_color[1]}, {marker_color[2]}, 1);'></span>
+            <a href='https://main--shikshalokam-mi-dashboard.netlify.app/school-details.html?school=school_id_45&school_name={school_name}' target='_blank' style='text-decoration: none; color: inherit;'>
                 <div class='message-content'>
-                    <h4>Project Name: {project_name} School Name: <a href='https://main--shikshalokam-mi-dashboard.netlify.app/school-details.html?school=school_id_45&school_name={school_name}' target='_blank'>{school_name}</a></h4>
-                    <p>Status: {status_flag}</p>
+                    <h4>Project Name: {project_name} School Name: {school_name}</h4>
+                    <p>Longitude: {longitude}, Latitude: {latitude}</p>
                     <div class='timestamp'>{current_time}</div>
                 </div>
-            </div>
+            </a>
+        </div>
         """)
 
         # Limit live feed size (optional, based on your preference)
