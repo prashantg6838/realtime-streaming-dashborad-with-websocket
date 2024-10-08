@@ -8,6 +8,8 @@ from queue import Queue
 import time
 import random
 import psycopg2
+from datetime import datetime
+import pytz
 
 # Set the page layout to 'wide'
 st.set_page_config(layout="wide")
@@ -140,7 +142,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Split the layout into two columns (20% for the big number, 80% for the map)
-col1, col2 = st.columns([0.2, 0.8])
+col1, col2 = st.columns([0.4, 0.6])
 
 # Placeholders for dynamic updates
 status_flag_placeholder = col1.empty()
@@ -155,7 +157,7 @@ with col1:
 st.markdown("""
     <style>
         .live-chat-box {
-            max-height: 260px;
+            max-height: 290px;
             overflow-y: auto;
             border: 1px solid #080808;
             border-radius: 10px;
@@ -174,6 +176,7 @@ st.markdown("""
             border-radius: 50%;
             margin-right: 5px;
             display: inline-block;
+            align-self: center;
         }
         .message-content {
             background-color: #f4c9fd;
@@ -182,8 +185,9 @@ st.markdown("""
             border-radius: 12px;
             display: inline-block;
             position: relative;   
-            min-width: 150px;    
-            max-width: 250px;     
+            width: 450px;
+            # min-width: 150px;    
+            # max-width: 500px;     
             word-wrap: break-word; 
             white-space: normal;   
             box-sizing: border-box; 
@@ -209,7 +213,6 @@ st.markdown("""
         }
     </style>
     <script>
-        // Function to scroll the chat box to the bottom
         function scrollToBottom() {
             var chatBox = document.querySelector('.live-chat-box');
             if (chatBox) {
@@ -272,25 +275,35 @@ while True:
             'timestamp': time.time()
         })
 
-        current_time = time.strftime("%H:%M:%S", time.localtime())
+        # Function to get current time in IST
+        def get_current_time_ist():
+            utc_now = datetime.now(pytz.utc)
+            ist_now = utc_now.astimezone(pytz.timezone('Asia/Kolkata'))
+            return ist_now.strftime('%H:%M:%S')  # Adjust the format as needed
+
+        # In your existing code, replace this line
+        current_time = get_current_time_ist()
+
+        # current_time = time.strftime("%H:%M:%S", time.localtime())
 
         # Modify the live feed generation logic
         live_feed.append(f"""
-        <div class='live-chat-message'>
-            <span class='avatar bubble-color' style='background-color: rgba({marker_color[0]}, {marker_color[1]}, {marker_color[2]}, 1);'></span>
-            <a href='https://main--shikshalokam-mi-dashboard.netlify.app/school-details.html?school=school_id_45&school_name={school_name}' target='_blank' style='text-decoration: none; color: inherit;'>
-                <div class='message-content'>
-                    <h4>
-                        Project Name: {project_name} <br>
-                        School Name: {school_name}  <br>
-                        State Name: {state_name}  <br>
-                        District Name: {district_name}
-                    </h4>
-                    <div class='timestamp'>{current_time}</div>
-                </div>
-            </a>
-        </div>
+            <div class='live-chat-message'>
+                <span class='avatar bubble-color' style='background-color: rgba({marker_color[0]}, {marker_color[1]}, {marker_color[2]}, 1);'></span>
+                <a href='https://main--shikshalokam-mi-dashboard.netlify.app/school-details.html?school=school_id_45&school_name={school_name}' target='_blank' style='text-decoration: none; color: inherit;'>
+                    <div class='message-content'>
+                        <h4 style='font-weight: normal;'>
+                            Project Name: <strong>{project_name}</strong> <br>
+                            School Name: <strong>{school_name}</strong> <br>
+                            State Name: <strong>{state_name}</strong> <br>
+                            District Name: <strong>{district_name}</strong>
+                        </h4>
+                        <div class='timestamp'>{current_time}</div>
+                    </div>
+                </a>
+            </div>
         """)
+
 
         # Limit live feed size (optional, based on your preference)
         live_feed = live_feed[-50:]  # Keep only the last 50 messages
