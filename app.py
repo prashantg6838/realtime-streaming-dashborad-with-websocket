@@ -329,11 +329,9 @@ while True:
         data=st.session_state.map_data,
         get_position='[longitude, latitude]',
         get_fill_color='color',
-        get_radius='100',
+        get_radius='300',
         pickable=True,
-        opacity=0.8,
-        radius_min_pixels=10,
-        radius_max_pixels=50,
+        opacity=0.8
     )
 
     scatter_layer = pdk.Layer(
@@ -341,7 +339,7 @@ while True:
         data=st.session_state.map_data,
         get_position='[longitude, latitude]',
         get_color='color',
-        get_radius=50000,
+        get_radius=100000,
         pickable=True,
         auto_highlight=True,
     )
