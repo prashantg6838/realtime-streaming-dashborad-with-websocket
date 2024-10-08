@@ -9,6 +9,8 @@ class Location(faust.Record,serializer='json'):
     longitude: float
     latitude: float
     status: str
+    state : str
+    district : str
     projectname: str
     school_name: str
 
@@ -19,7 +21,7 @@ topic = app.topic('location_topic', value_type=Location)
 async def process_location(locations):
     async for location in locations:
         print(f"Raw message: {locations}")
-        print(f"Project Name: {location.projectname}, Latitude: {location.latitude}, Longitude: {location.longitude}, Status: {location.status}, school_name: {location.school_name}")
+        # print(f"Project Name: {location.projectname}, Latitude: {location.latitude}, Longitude: {location.longitude}, Status: {location.status}, school_name: {location.school_name}, state_name:{location.state},district_name:{location.district}")
         # Calculate status_flag based on the status
         status_flag = 1 if location.status == "submitted" else 0
         
@@ -29,9 +31,12 @@ async def process_location(locations):
             'latitude': location.latitude,
             'status_flag': status_flag,
             'project_name': location.projectname,
-            'school_name': location.school_name
+            'school_name': location.school_name,
+            'state_name': location.state,
+            'district_name':location.district
         }
         
+        print(data)
         # Convert to JSON string
         json_data = json.dumps(data)
         # Call the WebSocket sending function

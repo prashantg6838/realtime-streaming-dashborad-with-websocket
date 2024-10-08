@@ -178,12 +178,15 @@ st.markdown("""
         .message-content {
             background-color: #f4c9fd;
             padding: 8px 8px;
-            max-height: 132px;
             border: 1px solid #efb0fc;
             border-radius: 12px;
-            max-width: 200px;
             display: inline-block;
-            position: relative;
+            position: relative;   
+            min-width: 150px;    
+            max-width: 250px;     
+            word-wrap: break-word; 
+            white-space: normal;   
+            box-sizing: border-box; 
         }
         .message-content h4 {
             margin: 0;
@@ -206,23 +209,35 @@ st.markdown("""
         }
     </style>
     <script>
-        // Function to automatically scroll the live chat box to the bottom
+        // Function to scroll the chat box to the bottom
         function scrollToBottom() {
-            var chatBox = window.parent.document.querySelector('.live-chat-box');
+            var chatBox = document.querySelector('.live-chat-box');
             if (chatBox) {
                 chatBox.scrollTop = chatBox.scrollHeight;
             }
         }
 
-        // Call the scrollToBottom function every time new messages are added
-        setInterval(scrollToBottom, 500);
+        // Scroll to the bottom after each message is added
+        function monitorScrollPosition() {
+            var chatBox = document.querySelector('.live-chat-box');
+            if (chatBox) {
+                const observer = new MutationObserver(scrollToBottom);
+                observer.observe(chatBox, { childList: true, subtree: true });
+            }
+        }
+
+        // When the page is loaded, initialize the scroll monitoring
+        document.addEventListener("DOMContentLoaded", function() {
+            monitorScrollPosition();
+            scrollToBottom();  // Initial scroll to bottom
+        });
     </script>
 """, unsafe_allow_html=True)
 
 view_state = pdk.ViewState(
-    latitude=20.5937,
+    latitude=22.5937,
     longitude=78.9629,
-    zoom=4,
+    zoom=3.4,
     pitch=0
 )
 
@@ -236,6 +251,8 @@ while True:
         status_flag = data['status_flag']
         project_name = data.get('project_name', 'Unknown Project')
         school_name = data.get('school_name', 'N/A')
+        state_name = data.get('state_name','')
+        district_name = data.get('district_name','')
 
         # Generate random color
         marker_color = random_color()
@@ -263,8 +280,12 @@ while True:
             <span class='avatar bubble-color' style='background-color: rgba({marker_color[0]}, {marker_color[1]}, {marker_color[2]}, 1);'></span>
             <a href='https://main--shikshalokam-mi-dashboard.netlify.app/school-details.html?school=school_id_45&school_name={school_name}' target='_blank' style='text-decoration: none; color: inherit;'>
                 <div class='message-content'>
-                    <h4>Project Name: {project_name} School Name: {school_name}</h4>
-                    <p>Longitude: {longitude}, Latitude: {latitude}</p>
+                    <h4>
+                        Project Name: {project_name} <br>
+                        School Name: {school_name}  <br>
+                        State Name: {state_name}  <br>
+                        District Name: {district_name}
+                    </h4>
                     <div class='timestamp'>{current_time}</div>
                 </div>
             </a>
@@ -302,13 +323,6 @@ while True:
         radius_max_pixels=50,
     )
 
-    # # Create a Pydeck deck to render the map
-    # deck = pdk.Deck(
-    #     layers=[layer],
-    #     initial_view_state=view_state,
-    #     tooltip={"text": "{project_name} | School: {school_name} | Status: {status_flag}"},
-    # )
-        # Create a Pydeck Layer for the markers
     scatter_layer = pdk.Layer(
         "ScatterplotLayer",
         data=st.session_state.map_data,
@@ -330,8 +344,8 @@ while True:
             project_name=marker['project_name'],
             school_name=marker['school_name']
         )
-    # Render the deck in the map placeholder
-    # map_placeholder.pydeck_chart(deck)
+
+
     map_placeholder.pydeck_chart(pdk.Deck(
         layers=[scatter_layer],
         initial_view_state=view_state,
